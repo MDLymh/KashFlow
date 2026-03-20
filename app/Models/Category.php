@@ -16,6 +16,7 @@ class Category extends Model
         'icon',
         'type',
         'color',
+        'is_base',
     ];
 
     /**
@@ -24,6 +25,14 @@ class Category extends Model
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * Get all user categories for this category
+     */
+    public function userCategories()
+    {
+        return $this->hasMany(UserCategory::class);
     }
 
     /**

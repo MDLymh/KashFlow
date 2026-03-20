@@ -2,23 +2,10 @@ import { Transition } from '@headlessui/react';
 import { Form, Head, Link, usePage } from '@inertiajs/react';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/delete-user';
-import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
-import type { BreadcrumbItem } from '@/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Profile settings',
-        href: edit(),
-    },
-];
 
 export default function Profile({
     mustVerifyEmail,
@@ -30,121 +17,119 @@ export default function Profile({
     const { auth } = usePage().props;
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
+        <SettingsLayout>
+            <Head title="Configuración de perfil" />
 
-            <h1 className="sr-only">Profile settings</h1>
-
-            <SettingsLayout>
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Profile information"
-                        description="Update your name and email address"
-                    />
-
-                    <Form
-                        {...ProfileController.update.form()}
-                        options={{
-                            preserveScroll: true,
-                        }}
-                        className="space-y-6"
-                    >
-                        {({ processing, recentlySuccessful, errors }) => (
-                            <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="name">Name</Label>
-
-                                    <Input
-                                        id="name"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.name}
-                                        name="name"
-                                        required
-                                        autoComplete="name"
-                                        placeholder="Full name"
-                                    />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.name}
-                                    />
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="email">Email address</Label>
-
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        className="mt-1 block w-full"
-                                        defaultValue={auth.user.email}
-                                        name="email"
-                                        required
-                                        autoComplete="username"
-                                        placeholder="Email address"
-                                    />
-
-                                    <InputError
-                                        className="mt-2"
-                                        message={errors.email}
-                                    />
-                                </div>
-
-                                {mustVerifyEmail &&
-                                    auth.user.email_verified_at === null && (
-                                        <div>
-                                            <p className="-mt-4 text-sm text-muted-foreground">
-                                                Your email address is
-                                                unverified.{' '}
-                                                <Link
-                                                    href={send()}
-                                                    as="button"
-                                                    className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
-                                                >
-                                                    Click here to resend the
-                                                    verification email.
-                                                </Link>
-                                            </p>
-
-                                            {status ===
-                                                'verification-link-sent' && (
-                                                <div className="mt-2 text-sm font-medium text-green-600">
-                                                    A new verification link has
-                                                    been sent to your email
-                                                    address.
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-
-                                <div className="flex items-center gap-4">
-                                    <Button
-                                        disabled={processing}
-                                        data-test="update-profile-button"
-                                    >
-                                        Save
-                                    </Button>
-
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-neutral-600">
-                                            Saved
-                                        </p>
-                                    </Transition>
-                                </div>
-                            </>
-                        )}
-                    </Form>
+            <div className="space-y-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Información de perfil
+                    </h2>
+                    <p className="mt-2 text-gray-600 dark:text-slate-400">
+                        Actualiza tu nombre y correo electrónico
+                    </p>
                 </div>
 
-                <DeleteUser />
-            </SettingsLayout>
-        </AppLayout>
+                <Form
+                    {...ProfileController.update.form()}
+                    options={{
+                        preserveScroll: true,
+                    }}
+                    className="space-y-6"
+                >
+                    {({ processing, recentlySuccessful, errors }) => (
+                        <>
+                            <div className="space-y-2">
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                                    Nombre
+                                </label>
+                                <input
+                                    id="name"
+                                    type="text"
+                                    className="mt-1 block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
+                                    defaultValue={auth.user.name}
+                                    name="name"
+                                    required
+                                    autoComplete="name"
+                                    placeholder="Nombre completo"
+                                />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.name}
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                                    Correo electrónico
+                                </label>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    className="mt-1 block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
+                                    defaultValue={auth.user.email}
+                                    name="email"
+                                    required
+                                    autoComplete="username"
+                                    placeholder="Correo electrónico"
+                                />
+                                <InputError
+                                    className="mt-2"
+                                    message={errors.email}
+                                />
+                            </div>
+
+                            {mustVerifyEmail &&
+                                auth.user.email_verified_at === null && (
+                                    <div className="space-y-2">
+                                        <p className="text-sm text-gray-600 dark:text-slate-400">
+                                            Tu correo electrónico no está verificado.{' '}
+                                            <Link
+                                                href={send()}
+                                                as="button"
+                                                className="text-indigo-600 dark:text-indigo-400 underline hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+                                            >
+                                                Haz clic aquí para reenviar el correo de verificación.
+                                            </Link>
+                                        </p>
+
+                                        {status ===
+                                            'verification-link-sent' && (
+                                            <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                                                Se ha enviado un nuevo enlace de verificación a tu correo electrónico.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                            <div className="flex items-center gap-4 pt-4">
+                                <button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    data-test="update-profile-button"
+                                >
+                                    Guardar
+                                </button>
+
+                                <Transition
+                                    show={recentlySuccessful}
+                                    enter="transition ease-in-out"
+                                    enterFrom="opacity-0"
+                                    leave="transition ease-in-out"
+                                    leaveTo="opacity-0"
+                                >
+                                    <p className="text-sm text-green-600 dark:text-green-400">
+                                        Guardado
+                                    </p>
+                                </Transition>
+                            </div>
+                        </>
+                    )}
+                </Form>
+            </div>
+
+            <DeleteUser />
+        </SettingsLayout>
     );
 }

@@ -1,5 +1,6 @@
 import AppLayout from '@/layouts/AppLayout';
 import Card from '@/components/Card';
+import RadioButton from '@/components/RadioButton';
 import { useForm, usePage } from '@inertiajs/react';
 import { FormEvent, useState } from 'react';
 import { Hourglass, CheckCircle, FileText } from 'lucide-react';
@@ -159,58 +160,52 @@ export default function CreateTransaction() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Type Selection */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-3">Tipo</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-3">Tipo</label>
                             <div className="flex gap-4">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        value="income"
-                                        checked={data.type === 'income'}
-                                        onChange={(e) => {
-                                            setData('type', e.target.value as 'income' | 'expense');
-                                            setData('category_id', '');
-                                        }}
-                                        className="rounded"
-                                    />
-                                    <span className="text-green-400">Ingreso</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        value="expense"
-                                        checked={data.type === 'expense'}
-                                        onChange={(e) => {
-                                            setData('type', e.target.value as 'income' | 'expense');
-                                            setData('category_id', '');
-                                        }}
-                                        className="rounded"
-                                    />
-                                    <span className="text-red-400">Gasto</span>
-                                </label>
+                                <RadioButton
+                                    value="income"
+                                    checked={data.type === 'income'}
+                                    onChange={(e) => {
+                                        setData('type', e.target.value as 'income' | 'expense');
+                                        setData('category_id', '');
+                                    }}
+                                    label="Ingreso"
+                                    color="green"
+                                />
+                                <RadioButton
+                                    value="expense"
+                                    checked={data.type === 'expense'}
+                                    onChange={(e) => {
+                                        setData('type', e.target.value as 'income' | 'expense');
+                                        setData('category_id', '');
+                                    }}
+                                    label="Gasto"
+                                    color="red"
+                                />
                             </div>
                         </div>
 
                         {/* Title */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Título</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Título</label>
                             <input
                                 type="text"
                                 value={data.title}
                                 onChange={(e) => setData('title', e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 placeholder="Ej: Almuerzo con clientes"
                                 required
                             />
-                            {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title}</p>}
+                            {errors.title && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.title}</p>}
                         </div>
 
                         {/* Description */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Descripción</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Descripción</label>
                             <textarea
                                 value={data.description}
                                 onChange={(e) => setData('description', e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 placeholder="Detalles adicionales..."
                                 rows={3}
                             />
@@ -218,55 +213,55 @@ export default function CreateTransaction() {
 
                         {/* Amount */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Monto</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Monto</label>
                             <input
                                 type="number"
                                 step="0.01"
                                 min="0"
                                 value={data.amount}
                                 onChange={(e) => setData('amount', e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 placeholder="0.00"
                                 required
                             />
-                            {errors.amount && <p className="text-red-400 text-sm mt-1">{errors.amount}</p>}
+                            {errors.amount && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.amount}</p>}
                         </div>
 
                         {/* Category */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Categoría</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Categoría</label>
                             <select
                                 value={data.category_id}
                                 onChange={(e) => setData('category_id', e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 required
                             >
-                                <option value="">Selecciona una categoría</option>
+                                <option value="" className="text-gray-500">Selecciona una categoría</option>
                                 {filteredCategories.map((cat: Category) => (
                                     <option key={cat.id} value={cat.id}>
                                         {cat.name}
                                     </option>
                                 ))}
                             </select>
-                            {errors.category_id && <p className="text-red-400 text-sm mt-1">{errors.category_id}</p>}
+                            {errors.category_id && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.category_id}</p>}
                         </div>
 
                         {/* Date */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Fecha</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Fecha</label>
                             <input
                                 type="date"
                                 value={data.transaction_date}
                                 onChange={(e) => setData('transaction_date', e.target.value)}
-                                className="w-full px-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white focus:outline-none focus:border-indigo-500"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                 required
                             />
-                            {errors.transaction_date && <p className="text-red-400 text-sm mt-1">{errors.transaction_date}</p>}
+                            {errors.transaction_date && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.transaction_date}</p>}
                         </div>
 
                         {/* Receipt Upload with Drag and Drop */}
                         <div>
-                            <label className="block text-sm font-medium text-white mb-2">Recibo (opcional)</label>
+                            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Recibo (opcional)</label>
                             <div
                                 onDragEnter={handleDrag}
                                 onDragLeave={handleDrag}
@@ -275,7 +270,7 @@ export default function CreateTransaction() {
                                 className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${
                                     isDragActive
                                         ? 'border-indigo-500 bg-indigo-500/10'
-                                        : 'border-slate-600 hover:border-indigo-500 hover:bg-slate-800/50'
+                                        : 'border-gray-300 dark:border-slate-600 hover:border-indigo-500 hover:bg-gray-50 dark:hover:bg-slate-800/50'
                                 } ${isAnalyzing ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 <input
@@ -289,29 +284,29 @@ export default function CreateTransaction() {
                                 <label htmlFor="receipt-input" className="cursor-pointer block">
                                     <div className="text-4xl mb-2">
                                         {isAnalyzing ? (
-                                            <Hourglass size={40} className="mx-auto text-indigo-400" />
+                                            <Hourglass size={40} className="mx-auto text-indigo-500 dark:text-indigo-400" />
                                         ) : data.receipt ? (
-                                            <CheckCircle size={40} className="mx-auto text-green-400" />
+                                            <CheckCircle size={40} className="mx-auto text-green-500 dark:text-green-400" />
                                         ) : (
-                                            <FileText size={40} className="mx-auto text-slate-400" />
+                                            <FileText size={40} className="mx-auto text-gray-400 dark:text-slate-400" />
                                         )}
                                     </div>
                                     {isAnalyzing ? (
                                         <>
-                                            <p className="text-slate-300">Analizando recibo...</p>
-                                            <p className="text-xs text-slate-400 mt-1">Extrayendo datos con IA</p>
+                                            <p className="text-gray-700 dark:text-slate-300">Analizando recibo...</p>
+                                            <p className="text-xs text-gray-600 dark:text-slate-400 mt-1">Extrayendo datos con IA</p>
                                         </>
                                     ) : (
                                         <>
-                                            <p className="text-slate-300">
+                                            <p className="text-gray-700 dark:text-slate-300">
                                                 {data.receipt ? 'Cambiar archivo' : 'Arrastra aquí o haz clic'}
                                             </p>
-                                            <p className="text-xs text-slate-400 mt-1">JPG, PNG o PDF (máx 10MB)</p>
+                                            <p className="text-xs text-gray-600 dark:text-slate-400 mt-1">JPG, PNG o PDF (máx 10MB)</p>
                                         </>
                                     )}
                                 </label>
                                 {data.receipt && !isAnalyzing && (
-                                    <p className="text-green-400 text-sm mt-2 flex items-center gap-2 justify-center">
+                                    <p className="text-green-600 dark:text-green-400 text-sm mt-2 flex items-center gap-2 justify-center">
                                         <CheckCircle size={14} />
                                         {data.receipt.name}
                                     </p>
@@ -323,15 +318,15 @@ export default function CreateTransaction() {
                                 <div
                                     className={`mt-3 p-3 rounded-lg text-sm ${
                                         analysisMessage.type === 'success'
-                                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                                            ? 'bg-green-50 dark:bg-green-500/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-500/30'
+                                            : 'bg-red-50 dark:bg-red-500/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/30'
                                     }`}
                                 >
                                     {analysisMessage.text}
                                 </div>
                             )}
 
-                            {errors.receipt && <p className="text-red-400 text-sm mt-1">{errors.receipt}</p>}
+                            {errors.receipt && <p className="text-red-600 dark:text-red-400 text-sm mt-1">{errors.receipt}</p>}
                         </div>
 
                         {/* Submit */}
@@ -339,7 +334,7 @@ export default function CreateTransaction() {
                             <button
                                 type="submit"
                                 disabled={processing || isAnalyzing}
-                                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
                             >
                                 {processing ? 'Guardando...' : 'Guardar Transacción'}
                             </button>
@@ -347,7 +342,7 @@ export default function CreateTransaction() {
                                 type="button"
                                 onClick={() => window.history.back()}
                                 disabled={processing || isAnalyzing}
-                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                                className="px-4 py-2 bg-gray-300 dark:bg-slate-700 hover:bg-gray-400 dark:hover:bg-slate-600 text-gray-900 dark:text-white rounded-lg transition-colors disabled:opacity-50 font-medium"
                             >
                                 Cancelar
                             </button>

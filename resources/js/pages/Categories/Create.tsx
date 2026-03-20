@@ -1,8 +1,31 @@
 import AppLayout from '@/layouts/AppLayout';
 import Card from '@/components/Card';
+import RadioButton from '@/components/RadioButton';
 import { useForm } from '@inertiajs/react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Utensils, Car, Lightbulb, HeartPulse, Gamepad2, BookOpen, ShoppingBag, Home, Folder, Briefcase, Laptop, TrendingUp, Gift, Coins, Coffee, Music, Plane, Tv, Users } from 'lucide-react';
 import { FormEvent } from 'react';
+
+const ICON_OPTIONS = [
+    { name: 'utensils', icon: Utensils, label: 'Comida' },
+    { name: 'car', icon: Car, label: 'Auto' },
+    { name: 'lightbulb', icon: Lightbulb, label: 'Luz' },
+    { name: 'heart-pulse', icon: HeartPulse, label: 'Salud' },
+    { name: 'gamepad2', icon: Gamepad2, label: 'Juego' },
+    { name: 'book-open', icon: BookOpen, label: 'Educación' },
+    { name: 'shopping-bag', icon: ShoppingBag, label: 'Compras' },
+    { name: 'home', icon: Home, label: 'Casa' },
+    { name: 'folder', icon: Folder, label: 'Carpeta' },
+    { name: 'briefcase', icon: Briefcase, label: 'Trabajo' },
+    { name: 'laptop', icon: Laptop, label: 'Laptop' },
+    { name: 'trending-up', icon: TrendingUp, label: 'Inversión' },
+    { name: 'gift', icon: Gift, label: 'Regalo' },
+    { name: 'coins', icon: Coins, label: 'Dinero' },
+    { name: 'coffee', icon: Coffee, label: 'Café' },
+    { name: 'music', icon: Music, label: 'Música' },
+    { name: 'plane', icon: Plane, label: 'Viaje' },
+    { name: 'tv', icon: Tv, label: 'Entretenimiento' },
+    { name: 'users', icon: Users, label: 'Grupo' },
+];
 
 const CATEGORY_COLORS = [
     '#f59e0b', // Amber
@@ -17,19 +40,12 @@ const CATEGORY_COLORS = [
     '#f97316', // Orange
 ];
 
-const CATEGORY_ICONS = [
-    '🍔', '🚗', '💡', '🏥', '🎮',
-    '📚', '🛍️', '🏠', '💼', '💻',
-    '📈', '🎁', '💰', '🏦', '📱',
-    '✈️', '🎬', '🍽️', '⚽', '🎵',
-];
-
 export default function CreateCategory() {
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         slug: '',
         description: '',
-        icon: '📁',
+        icon: 'folder',
         type: 'expense' as 'income' | 'expense',
         color: '#64748b',
     });
@@ -51,6 +67,9 @@ export default function CreateCategory() {
         setData('slug', generateSlug(value));
     };
 
+    const selectedIcon = ICON_OPTIONS.find(opt => opt.name === data.icon);
+    const IconComponent = selectedIcon?.icon;
+
     return (
         <AppLayout title="Crear Categoría">
             <div className="space-y-6">
@@ -58,11 +77,11 @@ export default function CreateCategory() {
                 <div className="flex items-center gap-4">
                     <a
                         href="/categories"
-                        className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                     >
-                        <ArrowLeft size={24} className="text-slate-400" />
+                        <ArrowLeft size={24} className="text-gray-600 dark:text-slate-400" />
                     </a>
-                    <h1 className="text-3xl font-bold text-white">Crear Categoría</h1>
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Crear Categoría</h1>
                 </div>
 
                 {/* Form */}
@@ -70,7 +89,7 @@ export default function CreateCategory() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Name */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                                 Nombre *
                             </label>
                             <input
@@ -78,50 +97,42 @@ export default function CreateCategory() {
                                 value={data.name}
                                 onChange={(e) => handleNameChange(e.target.value)}
                                 placeholder="Ej: Alimentación"
-                                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors"
                             />
                             {errors.name && (
-                                <p className="mt-1 text-sm text-red-400">{errors.name}</p>
+                                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.name}</p>
                             )}
                         </div>
 
                         {/* Type */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                                 Tipo *
                             </label>
                             <div className="flex gap-4">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="type"
-                                        value="expense"
-                                        checked={data.type === 'expense'}
-                                        onChange={(e) => setData('type', e.target.value as 'income' | 'expense')}
-                                        className="w-4 h-4"
-                                    />
-                                    <span className="text-slate-300">Gasto</span>
-                                </label>
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="radio"
-                                        name="type"
-                                        value="income"
-                                        checked={data.type === 'income'}
-                                        onChange={(e) => setData('type', e.target.value as 'income' | 'expense')}
-                                        className="w-4 h-4"
-                                    />
-                                    <span className="text-slate-300">Ingreso</span>
-                                </label>
+                                <RadioButton
+                                    value="expense"
+                                    checked={data.type === 'expense'}
+                                    onChange={(e) => setData('type', e.target.value as 'income' | 'expense')}
+                                    label="Gasto"
+                                    color="red"
+                                />
+                                <RadioButton
+                                    value="income"
+                                    checked={data.type === 'income'}
+                                    onChange={(e) => setData('type', e.target.value as 'income' | 'expense')}
+                                    label="Ingreso"
+                                    color="green"
+                                />
                             </div>
                             {errors.type && (
-                                <p className="mt-1 text-sm text-red-400">{errors.type}</p>
+                                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.type}</p>
                             )}
                         </div>
 
                         {/* Description */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                                 Descripción
                             </label>
                             <textarea
@@ -129,42 +140,53 @@ export default function CreateCategory() {
                                 onChange={(e) => setData('description', e.target.value)}
                                 placeholder="Descripción de la categoría"
                                 rows={3}
-                                className="w-full px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
+                                className="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-slate-400 focus:outline-none focus:border-indigo-500 dark:focus:border-indigo-500 transition-colors resize-none"
                             />
                             {errors.description && (
-                                <p className="mt-1 text-sm text-red-400">{errors.description}</p>
+                                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.description}</p>
                             )}
                         </div>
 
                         {/* Icon */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                                 Icono
                             </label>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="p-2 bg-indigo-100 dark:bg-indigo-600/20 rounded-lg">
+                                    {IconComponent && <IconComponent size={28} className="text-indigo-600 dark:text-indigo-400" />}
+                                </div>
+                                <span className="text-gray-700 dark:text-slate-300">{selectedIcon?.label || 'Seleccionar icono'}</span>
+                            </div>
                             <div className="grid grid-cols-5 gap-2">
-                                {CATEGORY_ICONS.map((icon) => (
-                                    <button
-                                        key={icon}
-                                        type="button"
-                                        onClick={() => setData('icon', icon)}
-                                        className={`p-3 rounded-lg text-2xl transition-colors ${
-                                            data.icon === icon
-                                                ? 'bg-indigo-600 border-2 border-indigo-400'
-                                                : 'bg-slate-700 border-2 border-transparent hover:bg-slate-600'
-                                        }`}
-                                    >
-                                        {icon}
-                                    </button>
-                                ))}
+                                {ICON_OPTIONS.map((opt) => {
+                                    const Icon = opt.icon;
+                                    return (
+                                        <button
+                                            key={opt.name}
+                                            type="button"
+                                            onClick={() => setData('icon', opt.name)}
+                                            className={`p-3 rounded-lg transition-colors flex flex-col items-center gap-1 ${
+                                                data.icon === opt.name
+                                                    ? 'bg-indigo-600 border-2 border-indigo-400 text-white'
+                                                    : 'bg-gray-200 dark:bg-slate-700 border-2 border-transparent hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-900 dark:text-slate-300'
+                                            }`}
+                                            title={opt.label}
+                                        >
+                                            <Icon size={20} />
+                                            <span className="text-xs">{opt.label}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                             {errors.icon && (
-                                <p className="mt-1 text-sm text-red-400">{errors.icon}</p>
+                                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.icon}</p>
                             )}
                         </div>
 
                         {/* Color */}
                         <div>
-                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                                 Color
                             </label>
                             <div className="flex flex-wrap gap-3">
@@ -175,14 +197,14 @@ export default function CreateCategory() {
                                         onClick={() => setData('color', color)}
                                         className={`w-10 h-10 rounded-lg transition-transform ${
                                             data.color === color
-                                                ? 'ring-2 ring-white scale-110'
+                                                ? 'ring-2 ring-gray-400 dark:ring-white scale-110'
                                                 : 'hover:scale-105'
                                         }`}
                                         style={{ backgroundColor: color }}
                                     />
                                 ))}
                                 <div className="flex items-center gap-2 ml-auto">
-                                    <label className="text-slate-300">Color personalizado:</label>
+                                    <label className="text-gray-700 dark:text-slate-300">Color personalizado:</label>
                                     <input
                                         type="color"
                                         value={data.color}
@@ -192,7 +214,7 @@ export default function CreateCategory() {
                                 </div>
                             </div>
                             {errors.color && (
-                                <p className="mt-1 text-sm text-red-400">{errors.color}</p>
+                                <p className="mt-1 text-sm text-red-500 dark:text-red-400">{errors.color}</p>
                             )}
                         </div>
 
@@ -200,7 +222,7 @@ export default function CreateCategory() {
                         <div className="flex gap-3 pt-4">
                             <a
                                 href="/categories"
-                                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-center font-medium"
+                                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-900 dark:text-white rounded-lg transition-colors text-center font-medium"
                             >
                                 Cancelar
                             </a>

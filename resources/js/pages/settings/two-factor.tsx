@@ -1,28 +1,16 @@
 import { Form, Head } from '@inertiajs/react';
 import { ShieldBan, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import Heading from '@/components/heading';
 import TwoFactorRecoveryCodes from '@/components/two-factor-recovery-codes';
 import TwoFactorSetupModal from '@/components/two-factor-setup-modal';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { useTwoFactorAuth } from '@/hooks/use-two-factor-auth';
-import AppLayout from '@/layouts/app-layout';
 import SettingsLayout from '@/layouts/settings/layout';
-import { disable, enable, show } from '@/routes/two-factor';
-import type { BreadcrumbItem } from '@/types';
+import { disable, enable } from '@/routes/two-factor';
 
 type Props = {
     requiresConfirmation?: boolean;
     twoFactorEnabled?: boolean;
 };
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Two-factor authentication',
-        href: show(),
-    },
-];
 
 export default function TwoFactor({
     requiresConfirmation = false,
@@ -41,101 +29,101 @@ export default function TwoFactor({
     const [showSetupModal, setShowSetupModal] = useState<boolean>(false);
 
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Two-factor authentication" />
+        <SettingsLayout>
+            <Head title="Autenticación de dos factores" />
+            <div className="space-y-6">
+                <div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        Autenticación de dos factores
+                    </h2>
+                    <p className="mt-2 text-gray-600 dark:text-slate-400">
+                        Gestiona tu configuración de autenticación de dos factores
+                    </p>
+                </div>
 
-            <h1 className="sr-only">Two-factor authentication settings</h1>
+                {twoFactorEnabled ? (
+                    <div className="space-y-6">
+                        <div className="inline-block px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-sm font-medium">
+                            Habilitado
+                        </div>
+                        <p className="text-gray-700 dark:text-slate-300">
+                            Con la autenticación de dos factores habilitada, se te pedirá un código seguro y aleatorio durante el inicio de sesión, que puedes obtener de una aplicación compatible con TOTP en tu teléfono.
+                        </p>
 
-            <SettingsLayout>
-                <div className="space-y-6">
-                    <Heading
-                        variant="small"
-                        title="Two-factor authentication"
-                        description="Manage your two-factor authentication settings"
-                    />
-                    {twoFactorEnabled ? (
-                        <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="default">Enabled</Badge>
-                            <p className="text-muted-foreground">
-                                With two-factor authentication enabled, you will
-                                be prompted for a secure, random pin during
-                                login, which you can retrieve from the
-                                TOTP-supported application on your phone.
-                            </p>
+                        <TwoFactorRecoveryCodes
+                            recoveryCodesList={recoveryCodesList}
+                            fetchRecoveryCodes={fetchRecoveryCodes}
+                            errors={errors}
+                        />
 
-                            <TwoFactorRecoveryCodes
-                                recoveryCodesList={recoveryCodesList}
-                                fetchRecoveryCodes={fetchRecoveryCodes}
-                                errors={errors}
-                            />
+                        <div>
+                            <Form {...disable.form()}>
+                                {({ processing }) => (
+                                    <button
+                                        type="submit"
+                                        disabled={processing}
+                                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        <ShieldBan size={18} />
+                                        Desactivar 2FA
+                                    </button>
+                                )}
+                            </Form>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="space-y-6">
+                        <div className="inline-block px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full text-sm font-medium">
+                            Deshabilitado
+                        </div>
+                        <p className="text-gray-700 dark:text-slate-300">
+                            Cuando habilites la autenticación de dos factores, se te pedirá un código seguro durante el inicio de sesión. Este código se puede obtener de una aplicación compatible con TOTP en tu teléfono.
+                        </p>
 
-                            <div className="relative inline">
-                                <Form {...disable.form()}>
+                        <div>
+                            {hasSetupData ? (
+                                <button
+                                    onClick={() => setShowSetupModal(true)}
+                                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2 font-medium"
+                                >
+                                    <ShieldCheck size={18} />
+                                    Continuar configuración
+                                </button>
+                            ) : (
+                                <Form
+                                    {...enable.form()}
+                                    onSuccess={() =>
+                                        setShowSetupModal(true)
+                                    }
+                                >
                                     {({ processing }) => (
-                                        <Button
-                                            variant="destructive"
+                                        <button
                                             type="submit"
                                             disabled={processing}
+                                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <ShieldBan /> Disable 2FA
-                                        </Button>
+                                            <ShieldCheck size={18} />
+                                            Habilitar 2FA
+                                        </button>
                                     )}
                                 </Form>
-                            </div>
+                            )}
                         </div>
-                    ) : (
-                        <div className="flex flex-col items-start justify-start space-y-4">
-                            <Badge variant="destructive">Disabled</Badge>
-                            <p className="text-muted-foreground">
-                                When you enable two-factor authentication, you
-                                will be prompted for a secure pin during login.
-                                This pin can be retrieved from a TOTP-supported
-                                application on your phone.
-                            </p>
+                    </div>
+                )}
 
-                            <div>
-                                {hasSetupData ? (
-                                    <Button
-                                        onClick={() => setShowSetupModal(true)}
-                                    >
-                                        <ShieldCheck />
-                                        Continue setup
-                                    </Button>
-                                ) : (
-                                    <Form
-                                        {...enable.form()}
-                                        onSuccess={() =>
-                                            setShowSetupModal(true)
-                                        }
-                                    >
-                                        {({ processing }) => (
-                                            <Button
-                                                type="submit"
-                                                disabled={processing}
-                                            >
-                                                <ShieldCheck />
-                                                Enable 2FA
-                                            </Button>
-                                        )}
-                                    </Form>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    <TwoFactorSetupModal
-                        isOpen={showSetupModal}
-                        onClose={() => setShowSetupModal(false)}
-                        requiresConfirmation={requiresConfirmation}
-                        twoFactorEnabled={twoFactorEnabled}
-                        qrCodeSvg={qrCodeSvg}
-                        manualSetupKey={manualSetupKey}
-                        clearSetupData={clearSetupData}
-                        fetchSetupData={fetchSetupData}
-                        errors={errors}
-                    />
-                </div>
-            </SettingsLayout>
-        </AppLayout>
+                <TwoFactorSetupModal
+                    isOpen={showSetupModal}
+                    onClose={() => setShowSetupModal(false)}
+                    requiresConfirmation={requiresConfirmation}
+                    twoFactorEnabled={twoFactorEnabled}
+                    qrCodeSvg={qrCodeSvg}
+                    manualSetupKey={manualSetupKey}
+                    clearSetupData={clearSetupData}
+                    fetchSetupData={fetchSetupData}
+                    errors={errors}
+                />
+            </div>
+        </SettingsLayout>
     );
 }

@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link } from '@inertiajs/react';
-import { Menu, BarChart3, Wallet, FileText, Receipt, Tag, Settings, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { Menu, BarChart3, Wallet, FileText, Receipt, Tag, Settings, LogOut, Moon, Sun } from 'lucide-react';
+import { useTheme } from '@/hooks/useTheme';
 
 interface AppLayoutProps {
     children: ReactNode;
@@ -11,6 +11,14 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children, title, headerAction }: AppLayoutProps) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { theme, toggleTheme, mounted } = useTheme();
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    useEffect(() => {
+        if (mounted) {
+            setIsDarkMode(theme === 'dark');
+        }
+    }, [theme, mounted]);
 
     const menuItems = [
         { label: 'Dashboard', href: '/dashboard', Icon: BarChart3 },
@@ -21,19 +29,19 @@ export default function AppLayout({ children, title, headerAction }: AppLayoutPr
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+        <div className="min-h-screen bg-gradient-to-br from-white to-gray-50 dark:from-slate-900 dark:to-slate-800">
             {/* Sidebar */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-950 transform transition-transform duration-200 ease-in-out ${
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-950 border-r border-gray-200 dark:border-slate-700 transform transition-transform duration-200 ease-in-out ${
                 sidebarOpen ? 'translate-x-0' : '-translate-x-full'
             } md:translate-x-0`}>
                 <div className="h-full flex flex-col">
                     {/* Logo */}
-                    <div className="p-6 border-b border-slate-700">
-                        <h1 className="text-2xl font-bold text-indigo-400 flex items-center gap-2">
+                    <div className="p-6 border-b border-gray-200 dark:border-slate-700">
+                        <h1 className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
                             <Wallet size={24} />
                             KashFlow
                         </h1>
-                        <p className="text-sm text-slate-400 mt-1">Control de gastos e ingresos</p>
+                        <p className="text-sm text-gray-600 dark:text-slate-400 mt-1">Control de gastos e ingresos</p>
                     </div>
 
                     {/* Menu */}
@@ -44,7 +52,7 @@ export default function AppLayout({ children, title, headerAction }: AppLayoutPr
                                 <Link
                                     key={item.href}
                                     href={item.href}
-                                    className="flex items-center px-4 py-3 rounded-lg text-slate-300 hover:bg-indigo-600 hover:text-white transition-colors duration-200"
+                                    className="flex items-center px-4 py-3 rounded-lg text-gray-700 dark:text-slate-300 hover:bg-indigo-50 dark:hover:bg-indigo-600 hover:text-indigo-600 dark:hover:text-white transition-colors duration-200"
                                 >
                                     <IconComponent size={20} className="mr-3" />
                                     {item.label}
@@ -54,10 +62,17 @@ export default function AppLayout({ children, title, headerAction }: AppLayoutPr
                     </nav>
 
                     {/* Footer */}
-                    <div className="p-4 border-t border-slate-700">
+                    <div className="p-4 border-t border-gray-200 dark:border-slate-700 space-y-3">
+                        <button
+                            onClick={toggleTheme}
+                            className="w-full text-left text-sm text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+                        >
+                            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                            {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+                        </button>
                         <Link
                             href="/settings/profile"
-                            className="text-sm text-slate-400 hover:text-slate-300 block mb-3 flex items-center gap-2"
+                            className="text-sm text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-300 block flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                         >
                             <Settings size={16} />
                             Configuración
@@ -65,7 +80,7 @@ export default function AppLayout({ children, title, headerAction }: AppLayoutPr
                         <Link
                             href="/logout"
                             method="post"
-                            className="text-sm text-red-400 hover:text-red-300 flex items-center gap-2"
+                            className="text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
                             <LogOut size={16} />
                             Cerrar sesión
@@ -77,16 +92,16 @@ export default function AppLayout({ children, title, headerAction }: AppLayoutPr
             {/* Main Content */}
             <main className="md:ml-64">
                 {/* Top bar */}
-                <div className="bg-slate-950 border-b border-slate-700 sticky top-0 z-40">
+                <div className="bg-white dark:bg-slate-950 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40">
                     <div className="flex items-center justify-between px-4 md:px-6 py-4">
                         <button
                             onClick={() => setSidebarOpen(!sidebarOpen)}
-                            className="md:hidden p-2 hover:bg-slate-800 rounded-lg"
+                            className="md:hidden p-2 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg"
                         >
-                            <Menu size={24} className="text-slate-400" />
+                            <Menu size={24} className="text-gray-600 dark:text-slate-400" />
                         </button>
                         {title && (
-                            <h2 className="text-xl font-semibold text-white">{title}</h2>
+                            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h2>
                         )}
                         <div className="flex-1" />
                         {headerAction && (

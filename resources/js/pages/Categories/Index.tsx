@@ -1,184 +1,203 @@
+import React from 'react';
 import AppLayout from '@/layouts/AppLayout';
 import Card from '@/components/Card';
-import ConfirmDialog from '@/components/ConfirmDialog';
-import { Link, usePage, router } from '@inertiajs/react';
+import Button from '@/components/Button';
+import Toast from '@/components/Toast';
+import { Head, Link, usePage, router } from '@inertiajs/react';
+import { Plus, Trash2, Edit, AlertCircle } from 'lucide-react';
+import * as LucideIcons from 'lucide-react';
+import { getIconComponent } from '@/lib/iconUtils';
 import { useState } from 'react';
-import { Plus, FolderOpen, Trash2 } from 'lucide-react';
 
 interface Category {
-    id: number;
-    name: string;
-    slug: string;
-    description: string;
-    icon: string;
-    type: 'income' | 'expense';
-    color: string;
-    transactionCount: number;
-    isOtros: boolean;
+  id: number;
+  name: string;
+  icon: string;
+  description?: string;
+  created_at: string;
+  is_base: boolean;
 }
 
-export default function CategoriesList() {
-    const { categories, filterType } = usePage().props as any;
-    const [selectedType, setSelectedType] = useState<'all' | 'income' | 'expense'>(filterType || 'all');
-    const [deleteDialog, setDeleteDialog] = useState<{categoryId: number, categoryName: string, hasTransactions: boolean} | null>(null);
-    const [deleting, setDeleting] = useState<number | null>(null);
+interface Props {
+  categories: Category[];
+}
 
-    const filtered = selectedType === 'all'
-        ? categories
-        : categories.filter((c: Category) => c.type === selectedType);
+export default function Index({ categories }: Props) {
+  const { auth } = usePage().props;
+  const [deleteDialog, setDeleteDialog] = useState<{ show: boolean; categoryId: number | null; categoryName: string } | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' } | null>(null);
 
-    const incomeCategories = categories.filter((c: Category) => c.type === 'income');
-    const expenseCategories = categories.filter((c: Category) => c.type === 'expense');
+  const handleDeleteClick = (categoryId: number, categoryName: string) => {
+    setDeleteDialog({
+      show: true,
+      categoryId,
+      categoryName,
+    });
+  };
 
-    const handleDelete = (category: Category) => {
-        setDeleteDialog({
-            categoryId: category.id,
-            categoryName: category.name,
-            hasTransactions: category.transactionCount > 0,
+  const confirmDelete = () => {
+    if (!deleteDialog?.categoryId) return;
+    
+    const categoryId = deleteDialog.categoryId;
+    setDeleting(categoryId);
+    setDeleteDialog(null);
+
+    router.delete(`/categories/${categoryId}`, {
+      onSuccess: () => {
+        setDeleting(null);
+        setToast({
+          show: true,
+          message: 'Categoría eliminada exitosamente',
+          type: 'success',
         });
-    };
-
-    const confirmDelete = () => {
-        if (!deleteDialog) return;
-        
-        setDeleting(deleteDialog.categoryId);
-        router.delete(`/categories/${deleteDialog.categoryId}`, {
-            onSuccess: () => {
-                setDeleting(null);
-                setDeleteDialog(null);
-                // Reload page to reflect changes
-                window.location.reload();
-            },
-            onError: (errors) => {
-                setDeleting(null);
-                console.error('Error deleting category:', errors);
-            },
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      },
+      onError: () => {
+        setDeleting(null);
+        setToast({
+          show: true,
+          message: 'Error al eliminar la categoría',
+          type: 'error',
         });
-    };
+      },
+    });
+  };
 
-    return (
-        <AppLayout title="Categorías">
-            <div className="space-y-6">
-                {/* Filter Controls */}
-                <Card>
-                    <div className="flex items-center justify-between gap-4">
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setSelectedType('all')}
-                                className={`px-4 py-2 rounded-lg transition-colors ${
-                                    selectedType === 'all'
-                                        ? 'bg-indigo-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                }`}
-                            >
-                                Todas
-                            </button>
-                            <button
-                                onClick={() => setSelectedType('income')}
-                                className={`px-4 py-2 rounded-lg transition-colors ${
-                                    selectedType === 'income'
-                                        ? 'bg-green-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                }`}
-                            >
-                                Ingresos ({incomeCategories.length})
-                            </button>
-                            <button
-                                onClick={() => setSelectedType('expense')}
-                                className={`px-4 py-2 rounded-lg transition-colors ${
-                                    selectedType === 'expense'
-                                        ? 'bg-red-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                                }`}
-                            >
-                                Gastos ({expenseCategories.length})
-                            </button>
-                        </div>
-                        <Link
-                            href="/categories/create"
-                            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex items-center gap-2"
-                        >
-                            <Plus size={18} />
-                            Nueva
-                        </Link>
+  // Renderiza un icono lucide dinámicamente
+  const renderIcon = (iconName: string) => {
+    const IconComponent = getIconComponent(iconName);
+    if (IconComponent) {
+      return React.createElement(IconComponent, { size: 32, className: 'text-indigo-600' });
+    }
+    // Fallback si el icono no existe
+    return React.createElement(LucideIcons.FolderOpen, { size: 32, className: 'text-gray-400' });
+  };
+
+  return (
+    <AppLayout>
+      <Head title="Categorías" />
+      <Card>
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold">Categorías</h1>
+            <p className="mt-2 text-gray-400">Gestiona tus categorías de gastos e ingresos</p>
+          </div>
+          <Link
+            href="/categories/create"
+          >
+            <Button type="button" className="flex items-center gap-2">
+              <Plus size={20} />
+              Nueva Categoría
+            </Button>
+          </Link>
+        </div>
+
+        {/* Categories Grid */}
+        {categories && categories.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category) => (
+              <div
+                key={category.id}
+                className="bg-white dark:bg-gray-800 rounded-lg hover:shadow-md dark:hover:shadow-lg transition-all p-6 border border-gray-200 dark:border-gray-700"
+              >
+                {/* Icon */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-lg">
+                    {renderIcon(category.icon)}
+                  </div>
+                  {!category.is_base && (
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/categories/${category.id}/edit`}
+                        className="p-2 text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <Edit size={18} />
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteClick(category.id, category.name)}
+                        className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={18} />
+                      </button>
                     </div>
-                </Card>
-
-                {/* Categories Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filtered.map((category: Category) => (
-                        <Card key={category.id} className="flex flex-col">
-                            <div className="flex items-start justify-between mb-4">
-                                <div className="text-4xl">{category.icon}</div>
-                                <span className={`px-3 py-1 rounded text-xs font-medium ${
-                                    category.type === 'income'
-                                        ? 'bg-green-500/20 text-green-400'
-                                        : 'bg-red-500/20 text-red-400'
-                                }`}>
-                                    {category.type === 'income' ? 'Ingreso' : 'Gasto'}
-                                </span>
-                            </div>
-
-                            <h3 className="text-lg font-semibold text-white mb-2">{category.name}</h3>
-                            
-                            {category.description && (
-                                <p className="text-sm text-slate-400 mb-4 flex-1">{category.description}</p>
-                            )}
-
-                            <div className="pt-4 border-t border-slate-700">
-                                <p className="text-xs text-slate-400 mb-3">
-                                    {category.transactionCount} transacciones
-                                </p>
-                                <div
-                                    className="h-2 rounded-full mb-4"
-                                    style={{ backgroundColor: category.color }}
-                                />
-                            </div>
-
-                            <div className="flex gap-2">
-                                <Link
-                                    href={`/categories/${category.id}/edit`}
-                                    className="flex-1 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded text-sm transition-colors text-center"
-                                >
-                                    Editar
-                                </Link>
-                                <button
-                                    onClick={() => handleDelete(category)}
-                                    disabled={category.isOtros || deleting === category.id}
-                                    className="flex-1 px-3 py-2 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                >
-                                    <Trash2 size={16} />
-                                    {deleting === category.id ? 'Eliminando...' : 'Eliminar'}
-                                </button>
-                            </div>
-                        </Card>
-                    ))}
+                  )}
+                  {category.is_base && (
+                    <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1 rounded-full">
+                      Base
+                    </span>
+                  )}
                 </div>
 
-                {filtered.length === 0 && (
-                    <Card className="text-center py-12">
-                        <FolderOpen size={48} className="mx-auto text-slate-400 mb-4" />
-                        <p className="text-slate-400">No hay categorías</p>
-                    </Card>
+                {/* Content */}
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">{category.name}</h3>
+                {category.description && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{category.description}</p>
                 )}
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  Creada el {new Date(category.created_at).toLocaleDateString('es-ES')}
+                </p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center border border-gray-200 dark:border-gray-700">
+            <div className="inline-block p-3 bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+              {React.createElement(LucideIcons.FolderOpen, { size: 32, className: 'text-gray-500 dark:text-gray-500' })}
             </div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No tienes categorías</h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Comienza creando tu primera categoría</p>
+            <Link href="/categories/create">
+              <Button type="button" className="inline-flex items-center gap-2">
+                <Plus size={20} />
+                Crear Categoría
+              </Button>
+            </Link>
+          </div>
+        )}
+      </Card>
 
-            {/* Delete Confirmation Dialog */}
-            <ConfirmDialog
-                isOpen={deleteDialog !== null && !deleteDialog?.categoryName?.toLowerCase().includes('otros')}
-                title="Eliminar Categoría"
-                message={
-                    deleteDialog?.hasTransactions
-                        ? `¿Estás seguro de que deseas eliminar la categoría "${deleteDialog?.categoryName}"? Sus transacciones se moverán automáticamente a "Otros".`
-                        : `¿Estás seguro de que deseas eliminar la categoría "${deleteDialog?.categoryName}"?`
-                }
-                confirmText="Eliminar"
-                cancelText="Cancelar"
-                isDanger={true}
-                isLoading={deleting !== null}
-                onConfirm={confirmDelete}
-                onCancel={() => setDeleteDialog(null)}
-            />
-        </AppLayout>
-    );
+      {/* Delete Confirmation Modal */}
+      {deleteDialog?.show && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-lg p-6 max-w-sm border border-slate-700">
+            <div className="flex items-center gap-3 mb-2">
+              <AlertCircle className="w-6 h-6 text-yellow-400" />
+              <h3 className="text-lg font-semibold text-white">Confirmar eliminación</h3>
+            </div>
+            <p className="text-slate-400 mb-6">¿Estás seguro de que deseas eliminar la categoría "{deleteDialog.categoryName}"? Esta acción no se puede deshacer.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteDialog(null)}
+                disabled={deleting !== null}
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleting !== null}
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              >
+                {deleting !== null ? 'Eliminando...' : 'Eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast?.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={3000}
+          onClose={() => setToast(null)}
+        />
+      )}
+    </AppLayout>
+  );
 }

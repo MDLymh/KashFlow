@@ -181,7 +181,7 @@ export default function Dashboard({
                                     className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
                                         chartType === 'comparison'
                                             ? 'bg-indigo-600 text-white'
-                                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                            : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                     }`}
                                 >
                                     <BarChart3 size={18} />
@@ -192,7 +192,7 @@ export default function Dashboard({
                                     className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
                                         chartType === 'categories'
                                             ? 'bg-indigo-600 text-white'
-                                            : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                            : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                     }`}
                                 >
                                     <PieChartIcon size={18} />
@@ -207,13 +207,13 @@ export default function Dashboard({
                                 {/* Temporality and Chart Type Selectors */}
                                 <div className="flex flex-col md:flex-row gap-4">
                                     <div className="flex gap-2">
-                                        <span className="text-sm text-slate-400 py-2">Período:</span>
+                                        <span className="text-sm text-gray-600 dark:text-slate-400 py-2">Período:</span>
                                         <button
                                             onClick={() => setTemporality('week')}
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 temporality === 'week'
                                                     ? 'bg-indigo-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Semanal
@@ -223,7 +223,7 @@ export default function Dashboard({
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 temporality === 'month'
                                                     ? 'bg-indigo-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Mensual
@@ -233,7 +233,7 @@ export default function Dashboard({
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 temporality === 'year'
                                                     ? 'bg-indigo-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Anual
@@ -241,13 +241,13 @@ export default function Dashboard({
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <span className="text-sm text-slate-400 py-2">Tipo:</span>
+                                        <span className="text-sm text-gray-600 dark:text-slate-400 py-2">Tipo:</span>
                                         <button
                                             onClick={() => setComparisonChartType('line')}
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 comparisonChartType === 'line'
                                                     ? 'bg-green-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Línea
@@ -257,7 +257,7 @@ export default function Dashboard({
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 comparisonChartType === 'bar'
                                                     ? 'bg-green-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Barras
@@ -267,7 +267,7 @@ export default function Dashboard({
                                             className={`px-3 py-2 rounded text-sm transition-colors ${
                                                 comparisonChartType === 'area'
                                                     ? 'bg-green-600 text-white'
-                                                    : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                    : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                             }`}
                                         >
                                             Área
@@ -280,11 +280,11 @@ export default function Dashboard({
                                     <ResponsiveContainer width="100%" height={300}>
                                         {comparisonChartType === 'line' && (
                                             <LineChart data={temporalData}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                                                <XAxis dataKey="period" stroke="#9CA3AF" />
-                                                <YAxis stroke="#9CA3AF" />
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" className="dark:stroke-slate-600" />
+                                                <XAxis dataKey="period" stroke="#6b7280" className="dark:stroke-slate-400" />
+                                                <YAxis stroke="#6b7280" className="dark:stroke-slate-400" />
                                                 <Tooltip 
-                                                    contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                                                    contentStyle={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#000' }}
                                                     cursor={{ stroke: 'rgba(99, 102, 241, 0.5)' }}
                                                 />
                                                 <Legend />
@@ -294,11 +294,11 @@ export default function Dashboard({
                                         )}
                                         {comparisonChartType === 'bar' && (
                                             <BarChart data={temporalData}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                                                <XAxis dataKey="period" stroke="#9CA3AF" />
-                                                <YAxis stroke="#9CA3AF" />
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" className="dark:stroke-slate-600" />
+                                                <XAxis dataKey="period" stroke="#6b7280" className="dark:stroke-slate-400" />
+                                                <YAxis stroke="#6b7280" className="dark:stroke-slate-400" />
                                                 <Tooltip 
-                                                    contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                                                    contentStyle={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#000' }}
                                                     cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
                                                 />
                                                 <Legend />
@@ -308,11 +308,11 @@ export default function Dashboard({
                                         )}
                                         {comparisonChartType === 'area' && (
                                             <AreaChart data={temporalData}>
-                                                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                                                <XAxis dataKey="period" stroke="#9CA3AF" />
-                                                <YAxis stroke="#9CA3AF" />
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#d1d5db" className="dark:stroke-slate-600" />
+                                                <XAxis dataKey="period" stroke="#6b7280" className="dark:stroke-slate-400" />
+                                                <YAxis stroke="#6b7280" className="dark:stroke-slate-400" />
                                                 <Tooltip 
-                                                    contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                                                    contentStyle={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#000' }}
                                                     cursor={{ fill: 'rgba(99, 102, 241, 0.1)' }}
                                                 />
                                                 <Legend />
@@ -323,7 +323,7 @@ export default function Dashboard({
                                     </ResponsiveContainer>
                                 ) : (
                                     <div className="text-center py-12">
-                                        <p className="text-slate-400">No hay datos para mostrar en este período</p>
+                                        <p className="text-gray-600 dark:text-slate-400">No hay datos para mostrar en este período</p>
                                     </div>
                                 )}
                             </div>
@@ -333,13 +333,13 @@ export default function Dashboard({
                         {chartType === 'categories' && (
                             <div className="space-y-4">
                                 <div className="flex gap-2">
-                                    <span className="text-sm text-slate-400 py-2">Mostrar:</span>
+                                    <span className="text-sm text-gray-600 dark:text-slate-400 py-2">Mostrar:</span>
                                     <button
                                         onClick={() => setCategoryType('expenses')}
                                         className={`px-3 py-2 rounded text-sm transition-colors ${
                                             categoryType === 'expenses'
                                                 ? 'bg-red-600 text-white'
-                                                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                         }`}
                                     >
                                         Gastos
@@ -349,7 +349,7 @@ export default function Dashboard({
                                         className={`px-3 py-2 rounded text-sm transition-colors ${
                                             categoryType === 'income'
                                                 ? 'bg-green-600 text-white'
-                                                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                                : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                         }`}
                                     >
                                         Ingresos
@@ -379,14 +379,14 @@ export default function Dashboard({
                                                 ))}
                                             </Pie>
                                             <Tooltip 
-                                                contentStyle={{ backgroundColor: '#1F2937', border: '1px solid #374151', borderRadius: '8px' }}
+                                                contentStyle={{ backgroundColor: '#f3f4f6', border: '1px solid #e5e7eb', borderRadius: '8px', color: '#000' }}
                                                 formatter={(value: any) => `$${value.toLocaleString('es-CO', { minimumFractionDigits: 2 })}`}
                                             />
                                         </PieChart>
                                     </ResponsiveContainer>
                                 ) : (
                                     <div className="text-center py-12">
-                                        <p className="text-slate-400">No hay datos de categorías para mostrar</p>
+                                        <p className="text-gray-600 dark:text-slate-400">No hay datos de categorías para mostrar</p>
                                     </div>
                                 )}
                             </div>
@@ -400,23 +400,23 @@ export default function Dashboard({
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-slate-700">
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Fecha</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Descripción</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Categoría</th>
-                                        <th className="text-right py-3 px-4 font-semibold text-slate-300">Monto</th>
+                                    <tr className="border-b border-gray-200 dark:border-slate-700">
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Fecha</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Descripción</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Categoría</th>
+                                        <th className="text-right py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Monto</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {recentTransactions.map((transaction) => (
-                                        <tr key={transaction.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                                            <td className="py-3 px-4 text-slate-400">{transaction.date}</td>
-                                            <td className="py-3 px-4 text-white">{transaction.title}</td>
+                                        <tr key={transaction.id} className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/30">
+                                            <td className="py-3 px-4 text-gray-600 dark:text-slate-400">{transaction.date}</td>
+                                            <td className="py-3 px-4 text-gray-900 dark:text-white">{transaction.title}</td>
                                             <td className="py-3 px-4">
-                                                <span className="text-slate-300">{transaction.category}</span>
+                                                <span className="text-gray-700 dark:text-slate-300">{transaction.category}</span>
                                             </td>
                                             <td className={`py-3 px-4 text-right font-semibold ${
-                                                transaction.type === 'income' ? 'text-green-400' : 'text-red-400'
+                                                transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                                             }`}>
                                                 {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString('es-CO')}
                                             </td>

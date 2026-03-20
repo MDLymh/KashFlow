@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\UserCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class CategoryController extends Controller
@@ -37,6 +38,7 @@ class CategoryController extends Controller
                 'icon' => $uc->icon,
                 'type' => $uc->category->type,
                 'color' => $uc->color,
+                'is_base' => $uc->category->is_base,
                 'transactionCount' => $user->transactions()
                     ->where('category_id', $uc->category_id)
                     ->count(),
@@ -67,25 +69,57 @@ class CategoryController extends Controller
         
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
             'icon' => 'nullable|string|max:50',
             'type' => 'required|in:income,expense',
             'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ]);
 
-        // Find or create the base category
-        $category = Category::firstOrCreate(
-            ['slug' => $validated['slug']],
-            [
-                'name' => $validated['name'],
-                'type' => $validated['type'],
-                'icon' => $validated['icon'] ?? '📁',
-                'color' => $validated['color'] ?? '#64748b',
-            ]
-        );
+        // Check if user already has a category with this name
+        $existingNameCategory = UserCategory::where('user_id', $user->id)
+            ->where('name', $validated['name'])
+            ->first();
 
-        // Check if user already has this category
+        if ($existingNameCategory) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Ya tienes una categoría con el nombre "' . $validated['name'] . '"');
+        }
+
+        $icon = $validated['icon'] ?? 'folder';
+        $color = $validated['color'] ?? '#64748b';
+
+        // Try to find an existing category with the same name, icon, and color
+        // The unique key is: name + icon + color (allows same name with different icon/color combinations)
+        $category = Category::where('name', $validated['name'])
+            ->where('icon', $icon)
+            ->where('color', $color)
+            ->where('is_base', false)
+            ->first();
+
+        // If not found, create a new one with a unique slug
+        if (!$category) {
+            $baseSlug = Str::slug($validated['name']) . '-' . $icon . '-' . str_replace('#', '', $color);
+            $slug = $baseSlug;
+            $counter = 1;
+            
+            // Ensure slug is unique
+            while (Category::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+
+            $category = Category::create([
+                'name' => $validated['name'],
+                'slug' => $slug,
+                'type' => $validated['type'],
+                'icon' => $icon,
+                'color' => $color,
+                'is_base' => false, // User-created categories are not base
+            ]);
+        }
+
+        // Check if user already has this exact category
         $existingUserCategory = UserCategory::where('user_id', $user->id)
             ->where('category_id', $category->id)
             ->first();
@@ -97,8 +131,8 @@ class CategoryController extends Controller
                 'category_id' => $category->id,
                 'name' => $validated['name'],
                 'description' => $validated['description'],
-                'icon' => $validated['icon'] ?? '📁',
-                'color' => $validated['color'] ?? '#64748b',
+                'icon' => $icon,
+                'color' => $color,
             ]);
         }
 
@@ -109,11 +143,20 @@ class CategoryController extends Controller
     /**
      * Edit category
      */
-    public function edit(UserCategory $userCategory)
+    public function edit($id)
     {
+        $user = auth()->guard('web')->user();
+        $userCategory = UserCategory::findOrFail($id);
+
         // Ensure user owns this category
-        if ($userCategory->user_id !== auth()->guard('web')->id()) {
+        if ($userCategory->user_id !== $user->id) {
             abort(403);
+        }
+
+        // Prevent editing base categories
+        if ($userCategory->category->is_base) {
+            return redirect()->back()
+                ->with('error', 'No se pueden modificar las categorías base');
         }
 
         return Inertia::render('Categories/Edit', [
@@ -132,11 +175,20 @@ class CategoryController extends Controller
     /**
      * Update category
      */
-    public function update(Request $request, UserCategory $userCategory)
+    public function update(Request $request, $id)
     {
+        $user = auth()->guard('web')->user();
+        $userCategory = UserCategory::findOrFail($id);
+
         // Ensure user owns this category
-        if ($userCategory->user_id !== auth()->guard('web')->id()) {
+        if ($userCategory->user_id !== $user->id) {
             abort(403);
+        }
+
+        // Prevent updating base categories
+        if ($userCategory->category->is_base) {
+            return redirect()->back()
+                ->with('error', 'No se pueden modificar las categorías base');
         }
 
         $validated = $request->validate([
@@ -145,6 +197,20 @@ class CategoryController extends Controller
             'icon' => 'nullable|string|max:50',
             'color' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
         ]);
+
+        // Check if user already has a different category with this name
+        if ($validated['name'] !== $userCategory->name) {
+            $existingNameCategory = UserCategory::where('user_id', $user->id)
+                ->where('name', $validated['name'])
+                ->where('id', '!=', $id)
+                ->first();
+
+            if ($existingNameCategory) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'Ya tienes una categoría con el nombre "' . $validated['name'] . '"');
+            }
+        }
 
         $userCategory->update($validated);
 
@@ -155,13 +221,20 @@ class CategoryController extends Controller
     /**
      * Delete category (only user association)
      */
-    public function destroy(UserCategory $userCategory)
+    public function destroy($id)
     {
         $user = auth()->guard('web')->user();
+        $userCategory = UserCategory::findOrFail($id);
 
         // Ensure user owns this category
         if ($userCategory->user_id !== $user->id) {
             abort(403);
+        }
+
+        // Prevent deleting base categories
+        if ($userCategory->category->is_base) {
+            return redirect()->back()
+                ->with('error', 'No se pueden eliminar las categorías base');
         }
 
         // Prevent deleting 'Otros' category

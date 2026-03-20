@@ -29,46 +29,48 @@ export default function ConfirmDialog({
         <>
             {/* Overlay */}
             <div
-                className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+                className="fixed inset-0 bg-black/50 dark:bg-black/50 z-40 transition-opacity"
                 onClick={onCancel}
             />
 
             {/* Dialog */}
             <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
-                <div className="bg-slate-800 rounded-lg shadow-2xl max-w-md w-full border border-slate-700">
+                <div className="bg-white dark:bg-slate-800 rounded-lg shadow-2xl max-w-md w-full border border-gray-200 dark:border-slate-700">
                     {/* Header */}
-                    <div className={`flex items-start gap-4 p-6 border-b border-slate-700 ${
-                        isDanger ? 'bg-red-950/30' : 'bg-slate-750'
+                    <div className={`flex items-start gap-4 p-6 border-b ${
+                        isDanger 
+                            ? 'bg-red-50 dark:bg-red-950/30 border-red-200 dark:border-slate-700' 
+                            : 'bg-yellow-50 dark:bg-slate-750 border-yellow-200 dark:border-slate-700'
                     }`}>
-                        <div className={`p-2 rounded-lg ${isDanger ? 'bg-red-500/20' : 'bg-indigo-500/20'}`}>
+                        <div className={`p-2 rounded-lg ${isDanger ? 'bg-red-100 dark:bg-red-500/20' : 'bg-yellow-100 dark:bg-indigo-500/20'}`}>
                             {isDanger ? (
-                                <Trash2 className="text-red-400" size={24} />
+                                <Trash2 className="text-red-600 dark:text-red-400" size={24} />
                             ) : (
-                                <AlertTriangle className="text-yellow-400" size={24} />
+                                <AlertTriangle className="text-yellow-600 dark:text-yellow-400" size={24} />
                             )}
                         </div>
                         <div className="flex-1">
-                            <h2 className="text-lg font-semibold text-white">{title}</h2>
+                            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
                         </div>
                         <button
                             onClick={onCancel}
-                            className="p-1 hover:bg-slate-700 rounded-lg transition-colors"
+                            className="p-1 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                         >
-                            <X size={20} className="text-slate-400" />
+                            <X size={20} className="text-gray-600 dark:text-slate-400" />
                         </button>
                     </div>
 
                     {/* Content */}
                     <div className="p-6">
-                        <p className="text-slate-300">{message}</p>
+                        <p className="text-gray-700 dark:text-slate-300">{message}</p>
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-end gap-3 p-6 border-t border-slate-700 bg-slate-900/50">
+                    <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-900/50">
                         <button
                             onClick={onCancel}
                             disabled={isLoading}
-                            className="px-4 py-2 rounded-lg border border-slate-600 text-slate-300 hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {cancelText}
                         </button>

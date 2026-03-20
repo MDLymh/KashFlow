@@ -44,18 +44,18 @@ export default function TransactionsList() {
                         <div className="flex items-center gap-2">
                             <Link
                                 href={`/transactions?month=${previousMonth}&year=${previousYear}`}
-                                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                             >
-                                <ChevronLeft size={20} className="text-slate-400" />
+                                <ChevronLeft size={20} className="text-gray-600 dark:text-slate-400" />
                             </Link>
-                            <span className="text-lg font-semibold text-white min-w-40 text-center">
+                            <span className="text-lg font-semibold text-gray-900 dark:text-white min-w-40 text-center">
                                 {monthNames[currentMonth - 1]} {currentYear}
                             </span>
                             <Link
                                 href={`/transactions?month=${nextMonth}&year=${nextYear}`}
-                                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                             >
-                                <ChevronRight size={20} className="text-slate-400" />
+                                <ChevronRight size={20} className="text-gray-600 dark:text-slate-400" />
                             </Link>
                         </div>
 
@@ -65,7 +65,7 @@ export default function TransactionsList() {
                                 className={`px-4 py-2 rounded-lg transition-colors ${
                                     selectedType === 'all'
                                         ? 'bg-indigo-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                        : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                 }`}
                             >
                                 Todas
@@ -75,7 +75,7 @@ export default function TransactionsList() {
                                 className={`px-4 py-2 rounded-lg transition-colors ${
                                     selectedType === 'income'
                                         ? 'bg-green-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                        : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                 }`}
                             >
                                 Ingresos
@@ -85,7 +85,7 @@ export default function TransactionsList() {
                                 className={`px-4 py-2 rounded-lg transition-colors ${
                                     selectedType === 'expense'
                                         ? 'bg-red-600 text-white'
-                                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                                        : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                                 }`}
                             >
                                 Gastos
@@ -108,26 +108,26 @@ export default function TransactionsList() {
                         <div className="overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
-                                    <tr className="border-b border-slate-700">
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Fecha</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Título</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Categoría</th>
-                                        <th className="text-left py-3 px-4 font-semibold text-slate-300">Monto</th>
-                                        <th className="text-center py-3 px-4 font-semibold text-slate-300">Acciones</th>
+                                    <tr className="border-b border-gray-200 dark:border-slate-700">
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Fecha</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Título</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Categoría</th>
+                                        <th className="text-left py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Monto</th>
+                                        <th className="text-center py-3 px-4 font-semibold text-gray-700 dark:text-slate-300">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {filteredTransactions.map((transaction: Transaction) => (
                                         <tr
                                             key={transaction.id}
-                                            className="border-b border-slate-700 hover:bg-slate-700/30 transition-colors"
+                                            className="border-b border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700/30 transition-colors"
                                         >
-                                            <td className="py-3 px-4 text-slate-400">{transaction.date}</td>
+                                            <td className="py-3 px-4 text-gray-600 dark:text-slate-400">{transaction.date}</td>
                                             <td className="py-3 px-4">
                                                 <div>
-                                                    <p className="font-medium text-white">{transaction.title}</p>
+                                                    <p className="font-medium text-gray-900 dark:text-white">{transaction.title}</p>
                                                     {transaction.description && (
-                                                        <p className="text-xs text-slate-400 truncate">{transaction.description}</p>
+                                                        <p className="text-xs text-gray-600 dark:text-slate-400 truncate">{transaction.description}</p>
                                                     )}
                                                 </div>
                                             </td>
@@ -141,7 +141,7 @@ export default function TransactionsList() {
                                             </td>
                                             <td className="py-3 px-4">
                                                 <p className={`font-semibold ${
-                                                    transaction.type === 'income' ? 'text-green-400' : 'text-red-400'
+                                                    transaction.type === 'income' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
                                                 }`}>
                                                     {transaction.type === 'income' ? '+' : '-'}${transaction.amount.toLocaleString('es-CO')}
                                                 </p>
@@ -178,8 +178,8 @@ export default function TransactionsList() {
                         </div>
                     ) : (
                         <div className="text-center py-12">
-                            <Inbox size={48} className="mx-auto text-slate-400 mb-4" />
-                            <p className="text-slate-400">No hay transacciones para este período</p>
+                            <Inbox size={48} className="mx-auto text-gray-400 dark:text-slate-400 mb-4" />
+                            <p className="text-gray-600 dark:text-slate-400">No hay transacciones para este período</p>
                             <Link
                                 href="/transactions/create"
                                 className="inline-block mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
@@ -193,17 +193,17 @@ export default function TransactionsList() {
                 {/* Delete Confirmation Modal */}
                 {deleteConfirm?.show && (
                     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                        <div className="bg-slate-800 rounded-lg p-6 max-w-sm border border-slate-700">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-6 max-w-sm border border-gray-200 dark:border-slate-700">
                             <div className="flex items-center gap-2 mb-2">
-                                <AlertCircle size={20} className="text-yellow-400" />
-                                <h3 className="text-lg font-semibold text-white">Confirmar eliminación</h3>
+                                <AlertCircle size={20} className="text-yellow-600 dark:text-yellow-400" />
+                                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Confirmar eliminación</h3>
                             </div>
-                            <p className="text-slate-400 mb-6">¿Estás seguro de que deseas eliminar esta transacción? Esta acción no se puede deshacer.</p>
+                            <p className="text-gray-600 dark:text-slate-400 mb-6">¿Estás seguro de que deseas eliminar esta transacción? Esta acción no se puede deshacer.</p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setDeleteConfirm(null)}
                                     disabled={isDeleting}
-                                    className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors disabled:opacity-50"
+                                    className="flex-1 px-4 py-2 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 text-gray-900 dark:text-white rounded-lg transition-colors disabled:opacity-50"
                                 >
                                     Cancelar
                                 </button>
